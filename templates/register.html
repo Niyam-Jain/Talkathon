@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #444e5d; /* Background color for the entire page */
+        }
+        .login-container {
+            border-radius: 3px;
+            padding: 20px;
+            background-color: #4e5765; /* Background color for the container */
+        }
+        h1, h2 {
+            color: white; /* Text color for the headers */
+        }
+        form {
+            text-align: center;
+        }
+        input[type="text"], input[type="password"], input[type="submit"] {
+            width: 300px; /* Adjust the width as needed */
+            padding: 10px;
+            margin: 5px;
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+        input[type="submit"] {
+            border-radius: 10px; /* Adjust the border-radius as needed */
+            background-color: #4ea95f; /* Background color for the login button */
+            color: white; /* Text color for the login button */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Talkathon!!!</h1>
+    <div class="login-container">
+        <h2>Register</h2>
+        <form action="{{ url_for('register') }}" method="POST">
+            <input type="text" name="username" placeholder="Username" required><br><br>
+            <input type="password" name="password" placeholder="Password" required><br><br>
+            <input type="submit" value="Register">
+        </form>
+        <p>Already have an Account? <a href="{{ url_for('login') }}">Login</a></p>
+        
+    </div>
+</body>
+</html>

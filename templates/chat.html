@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #444e5d;
+            color: white; /* Set text color to white */
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background-color: #3a3f47;
+            color: white;
+            font-size: 24px;
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background-color: #4e5765;
+            overflow-y: auto; /* Changed overflow to auto */
+        }
+        .message {
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #3a3f47;
+        }
+        .input-container input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 3px;
+            border: none;
+        }
+        .input-container button {
+            padding: 10px;
+            border-radius: 3px;
+            border: none;
+            background-color: #4ea95f;
+            color: white;
+        }
+        .input-container .leave-button {
+            background-color: #e74c3c;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        // Join the chat room
+        var username = "{{ username }}";
+        var room = "{{ room }}";
+        socket.emit('join', {'username': username, 'room': room});
+
+        // Listen for messages
+        socket.on('message', function(data) {
+            var messageContainer = document.createElement('div');
+            messageContainer.classList.add('message');
+            messageContainer.textContent = data.username + ": " + data.msg;
+            var chatContainer = document.querySelector('.chat-container');
+            chatContainer.appendChild(messageContainer);
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
+        });
+
+        // Send a message
+        function sendMessage() {
+            var messageInput = document.getElementById('message-input');
+            var message = messageInput.value;
+            if (message) {
+                socket.emit('message', {'username': username, 'room': room, 'msg': message});
+                messageInput.value = '';
+            }
+        }
+
+        // Leave the room
+        function leaveRoom() {
+            socket.emit('leave', {'username': username, 'room': room});
+            window.location.href = "{{ url_for('join_room_view') }}";
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            document.getElementById('leave-button').addEventListener('click', leaveRoom);
+
+            // Add event listener for Enter key
+            document.getElementById('message-input').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent form submission
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header">Welcome to Talkathon</div>
+    <div class="chat-container"></div>
+    <div class="input-container">
+        <button id="leave-button" class="leave-button">Leave</button>
+        <input type="text" id="message-input" placeholder="Type a message...">
+        <button id="send-button">Send</button>
+    </div>
+</body>
+</html>
